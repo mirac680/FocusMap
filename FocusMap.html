@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusMap - Zeymir Edition</title>
+    <style>
+        /* TEMALAR */
+        :root {
+            --bg-color: #121814;
+            --card-bg: #1a231e;
+            --card-border: #27382f;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #22c55e;
+            --accent-hover: #16a34a;
+            --lvl-0: #202e26;
+            --lvl-1: #14532d;
+            --lvl-2: #15803d;
+            --lvl-3: #16a34a;
+            --lvl-4: #22c55e;
+            --badge-bg: #14532d;
+            --badge-text: #86efac;
+        }
+
+        [data-theme="turkuaz"] {
+            --bg-color: #0b1329;
+            --card-bg: #111c38;
+            --card-border: #1e2d54;
+            --text-main: #f1f5f9;
+            --text-muted: #64748b;
+            --accent: #22d3ee;
+            --accent-hover: #06b6d4;
+            --lvl-0: #172445;
+            --lvl-1: #0e4e63;
+            --lvl-2: #08738a;
+            --lvl-3: #06b6d4;
+            --lvl-4: #22d3ee;
+            --badge-bg: #0e4e63;
+            --badge-text: #67e8f9;
+        }
+
+        [data-theme="pembe"] {
+            --bg-color: #1c1418;
+            --card-bg: #261a20;
+            --card-border: #3b2530;
+            --text-main: #fce7f3;
+            --text-muted: #9d7b8b;
+            --accent: #f472b6;
+            --accent-hover: #ec4899;
+            --lvl-0: #301f28;
+            --lvl-1: #831843;
+            --lvl-2: #be185d;
+            --lvl-3: #db2777;
+            --lvl-4: #f472b6;
+            --badge-bg: #831843;
+            --badge-text: #fbcfe8;
+        }
+
+        [data-theme="kirmizi"] {
+            --bg-color: #1a1212;
+            --card-bg: #241a1a;
+            --card-border: #382626;
+            --text-main: #fee2e2;
+            --text-muted: #997a7a;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --lvl-0: #2e1f1f;
+            --lvl-1: #7f1d1d;
+            --lvl-2: #991b1b;
+            --lvl-3: #b91c1c;
+            --lvl-4: #ef4444;
+            --badge-bg: #7f1d1d;
+            --badge-text: #fca5a5;
+        }
+
+        [data-theme="sari"] {
+            --bg-color: #1a1a12;
+            --card-bg: #242419;
+            --card-border: #383824;
+            --text-main: #fef08a;
+            --text-muted: #999466;
+            --accent: #facc15;
+            --accent-hover: #eab308;
+            --lvl-0: #2d2d1e;
+            --lvl-1: #713f12;
+            --lvl-2: #854d0e;
+            --lvl-3: #a16207;
+            --lvl-4: #facc15;
+            --badge-bg: #713f12;
+            --badge-text: #fde047;
+        }
+
+        [data-theme="siyah"] {
+            --bg-color: #000000;
+            --card-bg: #111111;
+            --card-border: #262626;
+            --text-main: #f5f5f5;
+            --text-muted: #737373;
+            --accent: #d4d4d4;
+            --accent-hover: #ffffff;
+            --lvl-0: #1a1a1a;
+            --lvl-1: #404040;
+            --lvl-2: #737373;
+            --lvl-3: #a3a3a3;
+            --lvl-4: #e5e5e5;
+            --badge-bg: #262626;
+            --badge-text: #e5e5e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            padding: 20px 10px;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .theme-palette {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .theme-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-dot.active {
+            border-color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+        }
+
+        .lang-select {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 6px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-action {
+            background: var(--card-border);
+            color: var(--text-main);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-action:hover {
+            opacity: 0.8;
+        }
+
+        .btn-home {
+            background: var(--accent);
+            color: #000;
+            display: none;
+        }
+
+        .quote-box {
+            background: var(--card-bg);
+            border-left: 4px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--accent);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        /* HEATMAP */
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-family: monospace;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .heatmap-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-display {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .badge-display.accent {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .badge-display.streak {
+            color: #fb923c;
+            border-color: #fb923c;
+            box-shadow: 0 0 6px rgba(251, 146, 60, 0.2);
+        }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-box {
+            width: 11px;
+            height: 11px;
+            border-radius: 2px;
+        }
+
+        .heatmap-layout {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .y-axis {
+            display: grid;
+            grid-template-rows: repeat(7, 11px);
+            gap: 4px;
+            font-family: monospace;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: right;
+            padding-right: 4px;
+        }
+
+        .y-axis div {
+            line-height: 11px;
+        }
+
+        .heatmap-scroll {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .heatmap-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .heatmap-scroll::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 4px;
+        }
+
+        .heatmap-scroll::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 4px;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-rows: repeat(7, 11px);
+            grid-auto-flow: column;
+            grid-auto-columns: 11px;
+            gap: 4px;
+        }
+
+        .cell {
+            width: 11px;
+            height: 11px;
+            border-radius: 2px;
+            background-color: var(--lvl-0);
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cell.month-end::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-muted);
+            opacity: 0.5;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .cell.empty {
+            background-color: transparent;
+            cursor: default;
+        }
+
+        .cell.empty::after {
+            display: none;
+        }
+
+        .cell[data-level="1"] {
+            background-color: var(--lvl-1);
+        }
+
+        .cell[data-level="2"] {
+            background-color: var(--lvl-2);
+        }
+
+        .cell[data-level="3"] {
+            background-color: var(--lvl-3);
+        }
+
+        .cell[data-level="4"] {
+            background-color: var(--lvl-4);
+        }
+
+        .cell.holiday-cell {
+            box-shadow: 0 0 4px var(--accent);
+        }
+
+        .x-axis {
+            position: relative;
+            height: 15px;
+            margin-top: 6px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .month-label {
+            position: absolute;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #0f172a;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--card-border);
+            z-index: 100;
+            display: none;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            max-width: 250px;
+        }
+
+        /* LİSTELER VE İÇERİK */
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .task-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .task-item.completed .checkbox {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .task-item.completed .checkbox::after {
+            content: '✓';
+            color: #000;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-text {
+            font-size: 0.95rem;
+        }
+
+        .task-meta {
+            font-size: 0.75rem;
+            color: var(--badge-text);
+            background: var(--badge-bg);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .btn-delete:hover {
+            color: #f87171;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            padding: 20px 0;
+        }
+
+        /* FORMLAR VE YÖNETİM */
+        .task-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .task-form input {
+            flex: 2;
+            min-width: 200px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .task-form input:focus,
+        .note-input:focus {
+            border-color: var(--accent);
+        }
+
+        .task-form select {
+            flex: 1;
+            min-width: 130px;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            padding: 12px;
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .task-form button,
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* YEDEKLEME BUTONLARI */
+        .backup-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-export {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-import {
+            background: #10b981;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-reset-all {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: 0.2s;
+        }
+
+        .btn-reset-all:hover {
+            background: #dc2626;
+        }
+
+        /* PUANLAMA VE NOT */
+        .rating-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .rating-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .btn-rate {
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-rate:hover,
+        .btn-rate.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .note-input {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 8px;
+            outline: none;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 15px;
+        }
+
+        #rating-feedback {
+            margin-top: 15px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* GEÇMİŞ (HISTORY) EKRANI BİLEŞENLERİ */
+        .history-item {
+            background: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 8px;
+        }
+
+        .history-date {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
+
+        .history-rating {
+            font-weight: bold;
+            font-size: 0.95rem;
+            background: var(--card-bg);
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .history-note {
+            font-size: 0.95rem;
+            font-style: italic;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            color: var(--text-main);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--text-muted);
+        }
+
+        /* EKRAN YÖNETİMİ */
+        #view-manage,
+        #view-rating,
+        #view-history {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" style="position: relative;">
+        <div class="tooltip" id="tooltip"></div>
+
+        <header>
+            <h1>FocusMap <span>Zeymir Edition</span></h1>
+            <div class="header-actions">
+                <!-- MODERN RENK PALETİ -->
+                <div class="theme-palette" id="theme-palette">
+                    <div class="theme-dot" data-theme-val="yesil" style="background: #22c55e;" title="Yeşil"></div>
+                    <div class="theme-dot" data-theme-val="turkuaz" style="background: #22d3ee;" title="Turkuaz"></div>
+                    <div class="theme-dot" data-theme-val="pembe" style="background: #f472b6;" title="Pembe"></div>
+                    <div class="theme-dot" data-theme-val="kirmizi" style="background: #ef4444;" title="Kırmızı"></div>
+                    <div class="theme-dot" data-theme-val="sari" style="background: #facc15;" title="Sarı"></div>
+                    <div class="theme-dot" data-theme-val="siyah" style="background: #a3a3a3;" title="Siyah"></div>
+                </div>
+
+                <!-- DİL SEÇİCİ -->
+                <select class="lang-select" id="lang-select">
+                    <option value="tr">🇹🇷 TR</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="de">🇩🇪 DE</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="es">🇪🇸 ES</option>
+                    <option value="it">🇮🇹 IT</option>
+                    <option value="ja">🇯🇵 JA</option>
+                    <option value="zh">🇨🇳 ZH</option>
+                    <option value="ru">🇷🇺 RU</option>
+                    <option value="ar">🇸🇦 AR</option>
+                </select>
+
+                <button class="btn-action" id="btn-open-history" data-i18n="historyBtn">Geçmiş 📜</button>
+                <button class="btn-action" id="btn-open-rating" data-i18n="rateDay">Kaliteyi Puanla ⭐</button>
+                <button class="btn-action" id="btn-open-manage" data-i18n="manageTasks">Ayarlar ⚙️</button>
+                <button class="btn-action btn-home" id="btn-open-home" data-i18n="backHome">Ana Sayfa ⬅</button>
+            </div>
+        </header>
+
+        <div class="quote-box" id="daily-quote">Motivasyon sözü yükleniyor...</div>
+
+        <!-- ANA SAYFA -->
+        <div id="view-home">
+            <!-- HARİTA -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="heatmap-header">
+                    <div class="heatmap-header-left">
+                        <span class="badge-display" id="current-year-display"></span>
+                        <span class="badge-display" id="total-tasks-year">0</span>
+                        <span class="badge-display streak" id="streak-display">🔥 Seri: 0</span>
+                        <span class="badge-display accent" id="avg-rating-display">💎 Yaşam Kalitesi: 0.0</span>
+                    </div>
+                    <div class="heatmap-legend">
+                        <span data-i18n="less">az</span>
+                        <div class="legend-box" style="background: var(--lvl-0)"></div>
+                        <div class="legend-box" style="background: var(--lvl-1)"></div>
+                        <div class="legend-box" style="background: var(--lvl-2)"></div>
+                        <div class="legend-box" style="background: var(--lvl-3)"></div>
+                        <div class="legend-box" style="background: var(--lvl-4)"></div>
+                        <span data-i18n="more">çok</span>
+                    </div>
+                </div>
+
+                <div class="heatmap-layout">
+                    <div class="y-axis" id="y-axis-labels"></div>
+                    <div class="heatmap-scroll" id="heatmap-scroll">
+                        <div class="heatmap-grid" id="heatmap-grid"></div>
+                        <div class="x-axis" id="heatmap-months"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GÖREVLER -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="section-title">
+                    <span id="today-title">📅 Bugünün Görevleri</span>
+                    <button id="btn-holiday" class="btn-action" style="font-size: 0.8rem; padding: 6px 10px;"
+                        data-i18n="makeHoliday">🌴 Bugünü Tatil Yap</button>
+                </div>
+                <ul class="task-list" id="today-task-list"></ul>
+                <div id="today-empty" class="empty-state" data-i18n="noTasks">Bugün için görev yok. Harika bir gün!
+                </div>
+            </div>
+
+            <!-- ALINAN DERSLER & UNUTMA BÖLÜMÜ (YENİ) -->
+            <div class="card">
+                <div class="section-title" data-i18n="lessonsTitle">🧠 Alınan Dersler & Unutma</div>
+                <form class="task-form" id="lesson-form" style="margin-bottom: 15px;">
+                    <input type="text" id="lesson-input" placeholder="Bir kural veya ders ekle..." required
+                        autocomplete="off" style="flex:1;">
+                    <button type="submit" data-i18n="addBtn">Ekle</button>
+                </form>
+                <ul class="task-list" id="lessons-list"></ul>
+                <div id="lessons-empty" class="empty-state" data-i18n="noLessons">Henüz eklenmiş bir not/ders yok.</div>
+            </div>
+        </div>
+
+        <!-- GEÇMİŞ KAYITLAR (HISTORY) EKRANI (YENİ) -->
+        <div id="view-history">
+            <div class="card">
+                <h2 class="section-title" data-i18n="historyTitle">Geçmiş Kayıtlar (Puanlar & Notlar)</h2>
+                <div id="history-list"></div>
+                <div id="history-empty" class="empty-state" data-i18n="noHistory">Henüz kaydedilmiş bir günlük notu veya
+                    puan bulunmuyor.</div>
+            </div>
+        </div>
+
+        <!-- GÜNLÜK VE PUANLAMA EKRANI -->
+        <div id="view-rating">
+            <div class="card">
+                <h2 class="section-title" data-i18n="rateTitle">Bugünkü Yaşam Kalitene Puan Ver (1-10)</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="rateGuide">Puanlama Rehberi: &lt;2:
+                    Çok Kötü | &lt;5: Kötü | &gt;5: İyi | &gt;8: Çok İyi</p>
+
+                <div class="rating-grid" id="rating-buttons-container"></div>
+
+                <h3 style="margin: 15px 0 10px 0; font-size: 1rem;" data-i18n="dailyNoteTitle">📖 Günün Notu (İsteğe
+                    Bağlı)</h3>
+                <textarea class="note-input" id="daily-note-input"
+                    placeholder="Bugün nasıl geçti? En önemli olay neydi?"></textarea>
+
+                <button class="btn-primary" id="btn-save-rating-note" style="width: 100%;"
+                    data-i18n="saveBtn">Kaydet</button>
+                <div id="rating-feedback"></div>
+            </div>
+        </div>
+
+        <!-- AYARLAR / YÖNETİM MENÜSÜ -->
+        <div id="view-manage">
+            <div class="card">
+                <h2 class="section-title" data-i18n="addTaskTitle">Yeni Görev Ekle</h2>
+                <form class="task-form" id="task-form">
+                    <input type="text" id="task-input" placeholder="Görev girin..." required autocomplete="off">
+                    <select id="task-freq"></select>
+                    <button type="submit" data-i18n="addBtn">Ekle</button>
+                </form>
+
+                <h2 class="section-title" style="margin-top: 10px;" data-i18n="allTasksTitle">Tüm Kayıtlı Görevler</h2>
+                <ul class="task-list" id="all-task-list"></ul>
+                <div id="all-empty" class="empty-state" style="display: none;" data-i18n="noAllTasks">Henüz görev
+                    eklenmemiş.</div>
+
+                <h2 class="section-title" style="margin-top: 30px;" data-i18n="backupTitle">Veri Yedekleme</h2>
+                <div class="backup-group">
+                    <button class="btn-export" id="btn-export" data-i18n="exportBtn">⬇️ Verileri İndir</button>
+                    <input type="file" id="file-import" style="display:none;" accept=".json">
+                    <button class="btn-import" id="btn-import-trigger" data-i18n="importBtn">⬆️ Yükle</button>
+                </div>
+
+                <hr style="border-color: var(--card-border); margin: 30px 0 0 0;">
+                <button class="btn-reset-all" id="btn-reset-all" data-i18n="resetAll">🚨 TÜM VERİLERİ SIFIRLA</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ÇEVİRİ PAKETLERİ (Yeni özellikler eklendi) ---
+        const i18n = {
+            tr: {
+                rateDay: "Kaliteyi Puanla ⭐", manageTasks: "Ayarlar ⚙️", backHome: "Ana Sayfa ⬅", historyBtn: "Geçmiş 📜",
+                qualityOfLife: "Yaşam Kalitesi:", streak: "🔥 Seri:", tasksCount: "görev", less: "az", more: "çok",
+                todayTasks: "📅 Bugünün Görevleri", makeHoliday: "🌴 Bugünü Tatil Yap", cancelHoliday: "🏖️ Tatil Günü (İptal)", noTasks: "Bugün için görev yok. Harika bir gün!",
+                rateTitle: "Bugünkü Yaşam Kalitene Puan Ver (1-10)", rateGuide: "Puanlama Rehberi: <2: Çok Kötü | <5: Kötü | >5: İyi | >8: Çok İyi",
+                dailyNoteTitle: "📖 Günün Notu (İsteğe Bağlı)", notePlaceholder: "Bugün nasıl geçti? En önemli olay neydi?", saveBtn: "Kaydet",
+                addTaskTitle: "Yeni Görev Ekle", addBtn: "Ekle", allTasksTitle: "Tüm Kayıtlı Görevler", noAllTasks: "Henüz görev eklenmemiş.",
+                lessonsTitle: "🧠 Alınan Dersler & Unutma", noLessons: "Henüz eklenmiş bir not/ders yok.", lessonPlaceholder: "Bir kural veya ders ekle...",
+                historyTitle: "Geçmiş Kayıtlar (Puanlar & Notlar)", noHistory: "Henüz kaydedilmiş bir günlük notu veya puan bulunmuyor.",
+                backupTitle: "Veri Yedekleme", exportBtn: "⬇️ Verileri İndir", importBtn: "⬆️ Yükle", resetAll: "🚨 TÜM VERİLERİ SIFIRLA", placeholder: "Görev girin...",
+                dayNames: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"], shortDays: ["pzt", "sal", "çar", "per", "cum", "cmt", "paz"], monthNames: ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"],
+                freq: { daily: "🔁 Her Gün", d1: "📅 Her Pzt", d2: "📅 Her Sal", d3: "📅 Her Çar", d4: "📅 Her Per", d5: "📅 Her Cum", d6: "📅 Her Cmt", d0: "📅 Her Paz" },
+                rateMsg: { vbad: "Günün çok kötü geçmiş. Yarın yeni bir fırsat!", bad: "Günün pek parlak geçmemiş. Yarın telafi edeceğiz.", good: "İyi geçmiş! Disiplinini korumaya devam et.", vgood: "Çok iyi geçmiş! Mükemmel bir iş çıkardın!" },
+                confirmReset: "Tüm verileri sıfırlamak istediğinize emin misiniz? Bu işlem geri ALINAMAZ!",
+                quotes: ["Disiplin, ne istediğinle şu an ne istediğin arasında seçim yapmaktır.", "Başarı, her gün tekrarlanan küçük çabaların toplamıdır.", "Senin en büyük rakibin, dünkü kendindir.", "Ertelenmiş bir iş, zihinde yer kaplayan bir yüktür. Hemen şimdi yap.", "Şampiyonlar, antrenman yapmaktan nefret ettiklerinde bile çalışanlardır.", "Küçük ilerlemeler, hiç ilerlememekten her zaman daha iyidir."]
+            },
+            en: {
+                rateDay: "Rate Quality ⭐", manageTasks: "Settings ⚙️", backHome: "Home ⬅", historyBtn: "History 📜",
+                qualityOfLife: "Quality of Life:", streak: "🔥 Streak:", tasksCount: "tasks", less: "less", more: "more",
+                todayTasks: "📅 Today's Tasks", makeHoliday: "🌴 Make Holiday", cancelHoliday: "🏖️ Cancel Holiday", noTasks: "No tasks for today. Have a great day!",
+                rateTitle: "Rate Today's Quality of Life (1-10)", rateGuide: "Guide: <2: Very Bad | <5: Bad | >5: Good | >8: Very Good",
+                dailyNoteTitle: "📖 Daily Note", notePlaceholder: "How was today? Key events?", saveBtn: "Save",
+                addTaskTitle: "Add Task", addBtn: "Add", allTasksTitle: "All Tasks", noAllTasks: "No tasks added.",
+                lessonsTitle: "🧠 Lessons Learned & Reminders", noLessons: "No lessons added yet.", lessonPlaceholder: "Add a rule or lesson...",
+                historyTitle: "History (Ratings & Notes)", noHistory: "No ratings or notes recorded yet.",
+                backupTitle: "Backup Data", exportBtn: "⬇️ Export Data", importBtn: "⬆️ Import Data", resetAll: "🚨 RESET ALL DATA", placeholder: "Enter task...",
+                dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], shortDays: ["mon", "tue", "wed", "thu", "fri", "sat", "sun"], monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                freq: { daily: "🔁 Everyday", d1: "📅 Every Mon", d2: "📅 Every Tue", d3: "📅 Every Wed", d4: "📅 Every Thu", d5: "📅 Every Fri", d6: "📅 Every Sat", d0: "📅 Every Sun" },
+                rateMsg: { vbad: "Very bad day. Tomorrow is a new chance!", bad: "Not a bright day. Let's fix it tomorrow.", good: "Good day! Keep up the discipline.", vgood: "Excellent day! Great job!" }, confirmReset: "Are you sure you want to reset everything? This CANNOT be undone!",
+                quotes: ["Discipline is choosing between what you want now and what you want most.", "Success is the sum of small efforts, repeated day in and day out.", "Your biggest competitor is yourself from yesterday."]
+            },
+            de: {
+                rateDay: "Qualität bewerten ⭐", manageTasks: "Einstellungen ⚙️", backHome: "Startseite ⬅", historyBtn: "Verlauf 📜",
+                qualityOfLife: "Lebensqualität:", streak: "🔥 Serie:", tasksCount: "Aufgaben", less: "wenig", more: "viel",
+                todayTasks: "📅 Aufgaben", makeHoliday: "🌴 Als Urlaub", cancelHoliday: "🏖️ Urlaub abbrechen", noTasks: "Keine Aufgaben. Genieß den Tag!",
+                rateTitle: "Bewerte die heutige Lebensqualität (1-10)", rateGuide: "Hilfe: <2: Sehr schlecht | <5: Schlecht | >5: Gut | >8: Sehr gut",
+                dailyNoteTitle: "📖 Notiz", notePlaceholder: "Wie war der Tag?", saveBtn: "Speichern",
+                addTaskTitle: "Neue Aufgabe", addBtn: "Hinzufügen", allTasksTitle: "Alle Aufgaben", noAllTasks: "Keine Aufgaben.",
+                lessonsTitle: "🧠 Lektionen & Erinnerungen", noLessons: "Keine Lektionen.", lessonPlaceholder: "Regel hinzufügen...",
+                historyTitle: "Verlauf (Bewertungen & Notizen)", noHistory: "Noch kein Verlauf vorhanden.",
+                backupTitle: "Backup", exportBtn: "⬇️ Exportieren", importBtn: "⬆️ Importieren", resetAll: "🚨 ALLES LÖSCHEN", placeholder: "Aufgabe...",
+                dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"], shortDays: ["mon", "die", "mit", "don", "fre", "sam", "son"], monthNames: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+                freq: { daily: "🔁 Täglich", d1: "📅 Jeden Mon", d2: "📅 Jeden Die", d3: "📅 Jeden Mit", d4: "📅 Jeden Don", d5: "📅 Jeden Fre", d6: "📅 Jeden Sam", d0: "📅 Jeden Son" },
+                rateMsg: { vbad: "Schlechter Tag. Morgen wird besser!", bad: "Nicht so toll. Bleib dran.", good: "Guter Tag! Weiter so.", vgood: "Sehr guter Tag! Perfekt!" }, confirmReset: "ALLES löschen? Das kann NICHT rückgängig gemacht werden!",
+                quotes: ["Disziplin ist die Wahl zwischen dem, was du jetzt willst, und dem, was du am meisten willst.", "Dein größter Konkurrent bist du selbst von gestern."]
+            },
+            fr: {
+                rateDay: "Évaluer Qualité ⭐", manageTasks: "Paramètres ⚙️", backHome: "Accueil ⬅", historyBtn: "Historique 📜",
+                qualityOfLife: "Qualité de vie:", streak: "🔥 Série:", tasksCount: "tâches", less: "peu", more: "beaucoup",
+                todayTasks: "📅 Tâches du jour", makeHoliday: "🌴 Prendre congé", cancelHoliday: "🏖️ Annuler congé", noTasks: "Pas de tâches. Profitez!",
+                rateTitle: "Évaluez la qualité de vie d'aujourd'hui (1-10)", rateGuide: "Guide: <2: Très Mauvais | <5: Mauvais | >5: Bon | >8: Très Bon",
+                dailyNoteTitle: "📖 Note", notePlaceholder: "Comment s'est passée la journée ?", saveBtn: "Enregistrer",
+                addTaskTitle: "Nouvelle Tâche", addBtn: "Ajouter", allTasksTitle: "Toutes les Tâches", noAllTasks: "Aucune tâche.",
+                lessonsTitle: "🧠 Leçons & Rappels", noLessons: "Aucune leçon.", lessonPlaceholder: "Ajouter une règle...",
+                historyTitle: "Historique (Notes & Évaluations)", noHistory: "Aucun historique pour le moment.",
+                backupTitle: "Sauvegarde", exportBtn: "⬇️ Exporter", importBtn: "⬆️ Importer", resetAll: "🚨 TOUT RÉINITIALISER", placeholder: "Tâche...",
+                dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], shortDays: ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"], monthNames: ["Jan", "Fév", "Mar", "Avr", "Mai", "Jui", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"],
+                freq: { daily: "🔁 Tous les jours", d1: "📅 Chaque Lun", d2: "📅 Chaque Mar", d3: "📅 Chaque Mer", d4: "📅 Chaque Jeu", d5: "📅 Chaque Ven", d6: "📅 Chaque Sam", d0: "📅 Chaque Dim" },
+                rateMsg: { vbad: "Très mauvaise journée. N'abandonnez pas!", bad: "Pas terrible. Faisons mieux demain.", good: "Bonne journée ! Continuez.", vgood: "Excellente journée !" }, confirmReset: "Tout réinitialiser ? Action IRRÉVERSIBLE !",
+                quotes: ["La discipline, c'est choisir entre ce qu'on veut maintenant et ce qu'on veut le plus.", "Votre plus grand concurrent, c'est vous-même hier."]
+            },
+            es: {
+                rateDay: "Calificar ⭐", manageTasks: "Ajustes ⚙️", backHome: "Inicio ⬅", historyBtn: "Historial 📜",
+                qualityOfLife: "Calidad de vida:", streak: "🔥 Racha:", tasksCount: "tareas", less: "menos", more: "más",
+                todayTasks: "📅 Tareas de hoy", makeHoliday: "🌴 Hacer Festivo", cancelHoliday: "🏖️ Cancelar Festivo", noTasks: "No hay tareas. ¡Disfruta!",
+                rateTitle: "Califica la calidad de vida de hoy (1-10)", rateGuide: "Guía: <2: Muy Mal | <5: Mal | >5: Bien | >8: Muy Bien",
+                dailyNoteTitle: "📖 Nota", notePlaceholder: "¿Cómo estuvo hoy?", saveBtn: "Guardar",
+                addTaskTitle: "Nueva Tarea", addBtn: "Añadir", allTasksTitle: "Todas las Tareas", noAllTasks: "Sin tareas.",
+                lessonsTitle: "🧠 Lecciones y Recuerdos", noLessons: "Sin lecciones.", lessonPlaceholder: "Añadir regla...",
+                historyTitle: "Historial (Notas y Calificaciones)", noHistory: "No hay historial todavía.",
+                backupTitle: "Respaldo", exportBtn: "⬇️ Exportar", importBtn: "⬆️ Importar", resetAll: "🚨 BORRAR TODO", placeholder: "Tarea...",
+                dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], shortDays: ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"], monthNames: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                freq: { daily: "🔁 Diario", d1: "📅 Cada Lun", d2: "📅 Cada Mar", d3: "📅 Cada Mié", d4: "📅 Cada Jue", d5: "📅 Cada Vie", d6: "📅 Cada Sáb", d0: "📅 Cada Dom" },
+                rateMsg: { vbad: "Muy mal día. ¡Mañana será mejor!", bad: "Mal día. No te rindas.", good: "¡Buen día! Sigue así.", vgood: "¡Excelente día!" }, confirmReset: "¿Borrar todo de forma PERMANENTE?",
+                quotes: ["La disciplina es elegir entre lo que quieres ahora y lo que más quieres.", "Tu mayor competidor eres tú mismo de ayer."]
+            },
+            it: {
+                rateDay: "Valuta Qualità ⭐", manageTasks: "Impostazioni ⚙️", backHome: "Home ⬅", historyBtn: "Cronologia 📜",
+                qualityOfLife: "Qualità vita:", streak: "🔥 Serie:", tasksCount: "compiti", less: "meno", more: "più",
+                todayTasks: "📅 Compiti di oggi", makeHoliday: "🌴 Giorno libero", cancelHoliday: "🏖️ Annulla libero", noTasks: "Nessun compito.",
+                rateTitle: "Valuta la qualità della vita di oggi (1-10)", rateGuide: "Guida: <2: Molto Male | <5: Male | >5: Bene | >8: Molto Bene",
+                dailyNoteTitle: "📖 Nota", notePlaceholder: "Com'è andata oggi?", saveBtn: "Salva",
+                addTaskTitle: "Nuovo Compito", addBtn: "Aggiungi", allTasksTitle: "Tutti i compiti", noAllTasks: "Nessun compito.",
+                lessonsTitle: "🧠 Lezioni & Promemoria", noLessons: "Nessuna lezione.", lessonPlaceholder: "Aggiungi regola...",
+                historyTitle: "Cronologia", noHistory: "Nessuna cronologia.",
+                backupTitle: "Backup", exportBtn: "⬇️ Esporta", importBtn: "⬆️ Importa", resetAll: "🚨 CANCELLA TUTTO", placeholder: "Compito...",
+                dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], shortDays: ["lun", "mar", "mer", "gio", "ven", "sab", "dom"], monthNames: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+                freq: { daily: "🔁 Tutti i giorni", d1: "📅 Ogni Lun", d2: "📅 Ogni Mar", d3: "📅 Ogni Mer", d4: "📅 Ogni Gio", d5: "📅 Ogni Ven", d6: "📅 Ogni Sab", d0: "📅 Ogni Dom" },
+                rateMsg: { vbad: "Giornata pessima. Non mollare!", bad: "Giornata no. Andrà meglio.", good: "Buona giornata! Continua così.", vgood: "Giornata eccellente!" }, confirmReset: "CANCELLARE TUTTO?",
+                quotes: ["La disciplina è scegliere tra ciò che vuoi ora e ciò che vuoi di più.", "Il tuo più grande concorrente sei tu ieri."]
+            },
+            ja: {
+                rateDay: "評価 ⭐", manageTasks: "設定 ⚙️", backHome: "ホーム ⬅", historyBtn: "履歴 📜",
+                qualityOfLife: "生活の質:", streak: "🔥 連続:", tasksCount: "タスク", less: "少", more: "多",
+                todayTasks: "📅 今日のタスク", makeHoliday: "🌴 休日にする", cancelHoliday: "🏖️ 休日取消", noTasks: "タスクなし。",
+                rateTitle: "今日の生活の質を評価 (1-10)", rateGuide: "ガイド: <2: 非常に悪い | <5: 悪い | >5: 良い | >8: 非常に良い",
+                dailyNoteTitle: "📖 ノート", notePlaceholder: "今日はどうだった？", saveBtn: "保存",
+                addTaskTitle: "タスク追加", addBtn: "追加", allTasksTitle: "すべてのタスク", noAllTasks: "タスクなし",
+                lessonsTitle: "🧠 教訓とメモ", noLessons: "教訓なし。", lessonPlaceholder: "ルールを追加...",
+                historyTitle: "履歴 (評価とノート)", noHistory: "履歴がありません。",
+                backupTitle: "バックアップ", exportBtn: "⬇️ エクスポート", importBtn: "⬆️ インポート", resetAll: "🚨 すべてリセット", placeholder: "タスク...",
+                dayNames: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], shortDays: ["月", "火", "水", "木", "金", "土", "日"], monthNames: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                freq: { daily: "🔁 毎日", d1: "📅 毎週月曜", d2: "📅 毎週火曜", d3: "📅 毎週水曜", d4: "📅 毎週木曜", d5: "📅 毎週金曜", d6: "📅 毎週土曜", d0: "📅 毎週日曜" },
+                rateMsg: { vbad: "最悪の日。明日は新しい日！", bad: "良くない日。明日は頑張ろう。", good: "良い日！規律を保とう。", vgood: "最高の日！素晴らしい！" }, confirmReset: "すべてリセットしますか？元には戻せません！",
+                quotes: ["規律とは、今欲しいものと一番欲しいものの選択である。", "最大のライバルは昨日の自分。"]
+            },
+            zh: {
+                rateDay: "评分 ⭐", manageTasks: "设置 ⚙️", backHome: "首页 ⬅", historyBtn: "历史 📜",
+                qualityOfLife: "生活质量:", streak: "🔥 连续:", tasksCount: "任务", less: "少", more: "多",
+                todayTasks: "📅 今日任务", makeHoliday: "🌴 设为假期", cancelHoliday: "🏖️ 取消假期", noTasks: "今日无任务。",
+                rateTitle: "评价今天的生活质量 (1-10)", rateGuide: "指南: <2: 极差 | <5: 差 | >5: 好 | >8: 极好",
+                dailyNoteTitle: "📖 日记", notePlaceholder: "今天怎么样？", saveBtn: "保存",
+                addTaskTitle: "添加任务", addBtn: "添加", allTasksTitle: "所有任务", noAllTasks: "无任务。",
+                lessonsTitle: "🧠 经验与教训", noLessons: "暂无记录。", lessonPlaceholder: "添加规则...",
+                historyTitle: "历史记录 (评分与日记)", noHistory: "暂无记录。",
+                backupTitle: "备份", exportBtn: "⬇️ 导出", importBtn: "⬆️ 导入", resetAll: "🚨 重置数据", placeholder: "输入任务...",
+                dayNames: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], shortDays: ["一", "二", "三", "四", "五", "六", "日"], monthNames: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+                freq: { daily: "🔁 每天", d1: "📅 每周一", d2: "📅 每周二", d3: "📅 每周三", d4: "📅 每周四", d5: "📅 每周五", d6: "📅 每周六", d0: "📅 每周日" },
+                rateMsg: { vbad: "糟糕的一天。明天会更好！", bad: "不太好。别放弃。", good: "美好的一天！继续保持。", vgood: "极好的一天！干得漂亮！" }, confirmReset: "确定要重置所有数据吗？不可恢复！",
+                quotes: ["纪律是在你现在想要的和你最想要的之间做选择。", "你最大的竞争对手是昨天的自己。"]
+            },
+            ru: {
+                rateDay: "Оценить ⭐", manageTasks: "Настройки ⚙️", backHome: "Домой ⬅", historyBtn: "История 📜",
+                qualityOfLife: "Качество жизни:", streak: "🔥 Серия:", tasksCount: "задач", less: "мало", more: "много",
+                todayTasks: "📅 Задачи сегодня", makeHoliday: "🌴 Выходной", cancelHoliday: "🏖️ Отменить выходной", noTasks: "Нет задач.",
+                rateTitle: "Оцените качество жизни сегодня (1-10)", rateGuide: "Гид: <2: Очень плохо | <5: Плохо | >5: Хорошо | >8: Отлично",
+                dailyNoteTitle: "📖 Заметка", notePlaceholder: "Как прошел день?", saveBtn: "Сохранить",
+                addTaskTitle: "Новая задача", addBtn: "Добавить", allTasksTitle: "Все задачи", noAllTasks: "Нет задач.",
+                lessonsTitle: "🧠 Уроки и правила", noLessons: "Нет уроков.", lessonPlaceholder: "Добавить правило...",
+                historyTitle: "История (Оценки и Заметки)", noHistory: "Истории пока нет.",
+                backupTitle: "Бэкап", exportBtn: "⬇️ Экспорт", importBtn: "⬆️ Импорт", resetAll: "🚨 СБРОСИТЬ ВСЕ", placeholder: "Задача...",
+                dayNames: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"], shortDays: ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], monthNames: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+                freq: { daily: "🔁 Ежедневно", d1: "📅 Каждый Пн", d2: "📅 Каждый Вт", d3: "📅 Каждую Ср", d4: "📅 Каждый Чт", d5: "📅 Каждую Пт", d6: "📅 Каждую Сб", d0: "📅 Каждое Вс" },
+                rateMsg: { vbad: "Ужасный день. Завтра будет лучше!", bad: "Плохой день. Не сдавайся.", good: "Хороший день! Так держать.", vgood: "Отличный день! Супер!" }, confirmReset: "Уверены, что хотите удалить ВСЕ данные? Это НЕЛЬЗЯ отменить!",
+                quotes: ["Дисциплина — это выбор между тем, чего вы хотите сейчас, и тем, чего вы хотите больше всего.", "Твой главный конкурент — это ты вчерашний."]
+            },
+            ar: {
+                rateDay: "تقييم ⭐", manageTasks: "إعدادات ⚙️", backHome: "الرئيسية ⬅", historyBtn: "تاريخ 📜",
+                qualityOfLife: "جودة الحياة:", streak: "🔥 سلسلة:", tasksCount: "مهام", less: "أقل", more: "أكثر",
+                todayTasks: "📅 مهام اليوم", makeHoliday: "🌴 عطلة", cancelHoliday: "🏖️ إلغاء عطلة", noTasks: "لا مهام.",
+                rateTitle: "قيم جودة الحياة اليوم (1-10)", rateGuide: "دليل: <2: سيء جدا | <5: سيء | >5: جيد | >8: ممتاز",
+                dailyNoteTitle: "📖 ملاحظة", notePlaceholder: "كيف كان يومك؟", saveBtn: "حفظ",
+                addTaskTitle: "مهمة جديدة", addBtn: "إضافة", allTasksTitle: "جميع المهام", noAllTasks: "لا توجد مهام.",
+                lessonsTitle: "🧠 دروس وتذكيرات", noLessons: "لا توجد دروس مضافة.", lessonPlaceholder: "أضف درسًا أو قاعدة...",
+                historyTitle: "التاريخ (التقييمات والملاحظات)", noHistory: "لا توجد سجلات بعد.",
+                backupTitle: "نسخ احتياطي", exportBtn: "⬇️ تصدير", importBtn: "⬆️ استيراد", resetAll: "🚨 مسح الكل", placeholder: "أدخل المهمة...",
+                dayNames: ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], shortDays: ["ن", "ث", "ر", "خ", "ج", "س", "ح"], monthNames: ["ينا", "فبر", "مار", "أبر", "ماي", "يون", "يول", "أغس", "سبت", "أكت", "نوف", "ديس"],
+                freq: { daily: "🔁 يومياً", d1: "📅 كل إثنين", d2: "📅 كل ثلاثاء", d3: "📅 كل أربعاء", d4: "📅 كل خميس", d5: "📅 كل جمعة", d6: "📅 كل سبت", d0: "📅 كل أحد" },
+                rateMsg: { vbad: "يوم سيء جدا. غدا أفضل!", bad: "يوم غير جيد. لا تستسلم.", good: "يوم جيد! استمر.", vgood: "يوم ممتاز! عمل رائع!" }, confirmReset: "هل أنت متأكد من مسح جميع البيانات؟ لا يمكن التراجع!",
+                quotes: ["الانضباط هو الاختيار بين ما تريده الآن وما تريده أكثر.", "منافسك الأكبر هو أنت بالأمس."]
+            }
+        };
+
+        let currentLang = localStorage.getItem('focusmap_zeymir_lang') || 'tr';
+        const langSelect = document.getElementById('lang-select');
+        langSelect.value = currentLang;
+
+        // VERİTABANI
+        let tasks = JSON.parse(localStorage.getItem('focusmap_zeymir_tasks')) || [];
+        let holidays = JSON.parse(localStorage.getItem('focusmap_zeymir_holidays')) || [];
+        let ratings = JSON.parse(localStorage.getItem('focusmap_zeymir_ratings')) || {};
+        let notes = JSON.parse(localStorage.getItem('focusmap_zeymir_notes')) || {};
+        let lessons = JSON.parse(localStorage.getItem('focusmap_zeymir_lessons')) || []; // YENİ: Dersler veritabanı
+
+        // TEMA SİSTEMİ
+        const savedTheme = localStorage.getItem('focusmap_zeymir_theme') || 'yesil';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const themeDots = document.querySelectorAll('.theme-dot');
+
+        function updateThemeUI(themeName) {
+            themeDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-theme-val') === themeName) dot.classList.add('active');
+            });
+        }
+        updateThemeUI(savedTheme);
+
+        themeDots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                const selectedTheme = e.target.getAttribute('data-theme-val');
+                document.documentElement.setAttribute('data-theme', selectedTheme);
+                localStorage.setItem('focusmap_zeymir_theme', selectedTheme);
+                updateThemeUI(selectedTheme);
+            });
+        });
+
+        // ZAMAN 
+        const d = new Date();
+        const currentYear = d.getFullYear();
+        const todayStr = `${currentYear}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const todayDayIndex = d.getDay();
+        document.getElementById('current-year-display').textContent = currentYear;
+
+        function getDateStr(dateObj) {
+            return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        }
+
+
+        function applyLanguage() {
+            const t = i18n[currentLang] || i18n.tr;
+
+            if (currentLang === 'ar') document.body.style.direction = 'rtl';
+            else document.body.style.direction = 'ltr';
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+
+            document.getElementById('task-input').placeholder = t.placeholder;
+            document.getElementById('daily-note-input').placeholder = t.notePlaceholder;
+            document.getElementById('lesson-input').placeholder = t.lessonPlaceholder;
+            document.getElementById('today-title').textContent = `${t.todayTasks} (${t.dayNames[todayDayIndex]})`;
+
+            const freqSelect = document.getElementById('task-freq');
+            freqSelect.innerHTML = `<option value="daily">${t.freq.daily}</option><option value="1">${t.freq.d1}</option><option value="2">${t.freq.d2}</option><option value="3">${t.freq.d3}</option><option value="4">${t.freq.d4}</option><option value="5">${t.freq.d5}</option><option value="6">${t.freq.d6}</option><option value="0">${t.freq.d0}</option>`;
+
+            const yAxis = document.getElementById('y-axis-labels');
+            yAxis.innerHTML = '';
+            t.shortDays.forEach(day => { yAxis.innerHTML += `<div>${day}</div>`; });
+
+            const dayOfYear = Math.floor((d - new Date(currentYear, 0, 0)) / (1000 * 60 * 60 * 24));
+            document.getElementById('daily-quote').textContent = `"${t.quotes[dayOfYear % t.quotes.length]}"`;
+
+            renderApp();
+            if (document.getElementById('view-rating').style.display === 'block') renderRatingScreen();
+            if (document.getElementById('view-history').style.display === 'block') renderHistoryScreen();
+        }
+
+        langSelect.addEventListener('change', (e) => {
+            currentLang = e.target.value; localStorage.setItem('focusmap_zeymir_lang', currentLang); applyLanguage();
+        });
+
+        // EKRAN YÖNETİMİ
+        function switchView(viewName) {
+            const views = ['home', 'manage', 'rating', 'history'];
+            views.forEach(v => {
+                document.getElementById('view-' + v).style.display = 'none';
+                if (document.getElementById('btn-open-' + v)) {
+                    document.getElementById('btn-open-' + v).style.display = 'block';
+                }
+            });
+
+            document.getElementById('view-' + viewName).style.display = 'block';
+            if (document.getElementById('btn-open-' + viewName)) {
+                document.getElementById('btn-open-' + viewName).style.display = 'none';
+            }
+
+            if (viewName === 'home') renderApp();
+            else if (viewName === 'manage') renderManageTasks();
+            else if (viewName === 'rating') renderRatingScreen();
+            else if (viewName === 'history') renderHistoryScreen();
+        }
+
+        document.getElementById('btn-open-manage').addEventListener('click', () => switchView('manage'));
+        document.getElementById('btn-open-rating').addEventListener('click', () => switchView('rating'));
+        document.getElementById('btn-open-history').addEventListener('click', () => switchView('history'));
+        document.getElementById('btn-open-home').addEventListener('click', () => switchView('home'));
+
+        // VERİ KAYIT 
+        function saveData() {
+            localStorage.setItem('focusmap_zeymir_tasks', JSON.stringify(tasks));
+            localStorage.setItem('focusmap_zeymir_holidays', JSON.stringify(holidays));
+            localStorage.setItem('focusmap_zeymir_ratings', JSON.stringify(ratings));
+            localStorage.setItem('focusmap_zeymir_notes', JSON.stringify(notes));
+            localStorage.setItem('focusmap_zeymir_lessons', JSON.stringify(lessons)); // Dersleri kaydet
+
+            if (document.getElementById('view-home').style.display === 'block') renderApp();
+            if (document.getElementById('view-manage').style.display === 'block') renderManageTasks();
+            if (document.getElementById('view-history').style.display === 'block') renderHistoryScreen();
+        }
+
+        // YEDEKLEME (İÇE / DIŞA AKTAR)
+        document.getElementById('btn-export').addEventListener('click', () => {
+            const data = { tasks, holidays, ratings, notes, lessons, theme: savedTheme, lang: currentLang };
+            const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `focusmap_backup_${todayStr}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('btn-import-trigger').addEventListener('click', () => {
+            document.getElementById('file-import').click();
+        });
+
+        document.getElementById('file-import').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (evt) {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    tasks = data.tasks || []; holidays = data.holidays || [];
+                    ratings = data.ratings || {}; notes = data.notes || {};
+                    lessons = data.lessons || [];
+                    saveData();
+                    alert("Veriler başarıyla içe aktarıldı!");
+                    switchView('home');
+                } catch (err) {
+                    alert("Geçersiz yedekleme dosyası!");
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
+
+        // TAM SIFIRLAMA
+        document.getElementById('btn-reset-all').addEventListener('click', () => {
+            const t = i18n[currentLang] || i18n.tr;
+            if (confirm(t.confirmReset)) {
+                tasks = []; holidays = []; ratings = {}; notes = {}; lessons = []; saveData(); switchView('home');
+            }
+        });
+
+        const btnHoliday = document.getElementById('btn-holiday');
+        btnHoliday.addEventListener('click', () => {
+            const idx = holidays.indexOf(todayStr);
+            if (idx > -1) holidays.splice(idx, 1); else holidays.push(todayStr);
+            saveData();
+        });
+
+        // YENİ GÖREV EKLEME
+        document.getElementById('task-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            tasks.push({ id: 'task_' + Date.now(), text: document.getElementById('task-input').value.trim(), type: document.getElementById('task-freq').value, completedDates: [] });
+            document.getElementById('task-input').value = ''; saveData();
+        });
+
+        // YENİ DERS/KURAL EKLEME
+        document.getElementById('lesson-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            lessons.push({ id: 'lesson_' + Date.now(), text: document.getElementById('lesson-input').value.trim() });
+            document.getElementById('lesson-input').value = ''; saveData();
+        });
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const idx = task.completedDates.indexOf(todayStr);
+            if (idx > -1) task.completedDates.splice(idx, 1); else task.completedDates.push(todayStr);
+            saveData();
+        }
+
+        function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); saveData(); }
+        function deleteLesson(id) { lessons = lessons.filter(l => l.id !== id); saveData(); }
+
+        // PUANLAMA VE GÜNLÜK NOT EKRANI
+        let tempRating = ratings[todayStr] || 0;
+
+        function renderRatingScreen() {
+            const container = document.getElementById('rating-buttons-container');
+            const noteInput = document.getElementById('daily-note-input');
+
+            container.innerHTML = '';
+            tempRating = ratings[todayStr] || 0;
+            noteInput.value = notes[todayStr] || "";
+
+            for (let i = 1; i <= 10; i++) {
+                const btn = document.createElement('button');
+                btn.className = `btn-rate ${i === tempRating ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => {
+                    tempRating = i;
+                    renderRatingButtonsOnly();
+                };
+                container.appendChild(btn);
+            }
+            updateFeedbackText();
+        }
+
+        function renderRatingButtonsOnly() {
+            const btns = document.querySelectorAll('.btn-rate');
+            btns.forEach((btn, index) => {
+                if (index + 1 === tempRating) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            updateFeedbackText();
+        }
+
+        function updateFeedbackText() {
+            const feedback = document.getElementById('rating-feedback');
+            const t = i18n[currentLang] || i18n.tr;
+            if (tempRating > 0) {
+                let msg = "", color = "";
+                if (tempRating < 2) { msg = t.rateMsg.vbad; color = "#ef4444"; }
+                else if (tempRating < 5) { msg = t.rateMsg.bad; color = "#f87171"; }
+                else if (tempRating <= 8) { msg = t.rateMsg.good; color = "#22c55e"; }
+                else { msg = t.rateMsg.vgood; color = "var(--accent)"; }
+                feedback.textContent = `${tempRating}/10 - ${msg}`;
+                feedback.style.color = color;
+            } else { feedback.textContent = ""; }
+        }
+
+        document.getElementById('btn-save-rating-note').addEventListener('click', () => {
+            ratings[todayStr] = tempRating;
+            const noteText = document.getElementById('daily-note-input').value.trim();
+            if (noteText) notes[todayStr] = noteText;
+            else delete notes[todayStr];
+            saveData();
+            switchView('home');
+        });
+
+        // GEÇMİŞ (HISTORY) EKRANINI OLUŞTURMA
+        function renderHistoryScreen() {
+            const listEl = document.getElementById('history-list');
+            const emptyEl = document.getElementById('history-empty');
+            listEl.innerHTML = '';
+
+            // Notları ve Puanları olan günleri birleştir
+            let allDates = new Set([...Object.keys(ratings), ...Object.keys(notes)]);
+            let sortedDates = Array.from(allDates).sort((a, b) => b.localeCompare(a)); // En yeniden eskiye
+
+            if (sortedDates.length === 0) {
+                emptyEl.style.display = 'block';
+            } else {
+                emptyEl.style.display = 'none';
+                sortedDates.forEach(date => {
+                    const r = ratings[date] ? `⭐ ${ratings[date]}/10` : "";
+                    const n = notes[date] || "";
+
+                    listEl.innerHTML += `
+            <div class="history-item">
+              <div class="history-header">
+                <span class="history-date">${date}</span>
+                ${r ? `<span class="history-rating">${r}</span>` : ''}
+              </div>
+              ${n ? `<div class="history-note">${escapeHtml(n)}</div>` : ''}
+            </div>
+          `;
+                });
+            }
+        }
+
+        // İSTATİSTİKLER (Ortalama & Streak)
+        function updateAverageRating() {
+            let total = 0, count = 0;
+            for (let date in ratings) { total += ratings[date]; count++; }
+            const avg = count > 0 ? (total / count).toFixed(1) : "0.0";
+            const t = i18n[currentLang] || i18n.tr;
+            document.getElementById('avg-rating-display').textContent = `💎 ${t.qualityOfLife} ${avg}`;
+        }
+
+        function getActivityData() {
+            const data = {}; let total = 0;
+            tasks.forEach(task => {
+                task.completedDates.forEach(date => {
+                    data[date] = (data[date] || 0) + 1;
+                    if (date.startsWith(currentYear.toString())) total++;
+                });
+            });
+            return { data, total };
+        }
+
+        function calculateStreak(activityData) {
+            let streak = 0;
+            let checkDate = new Date(currentYear, d.getMonth(), d.getDate());
+            let dStr = getDateStr(checkDate);
+
+            if (!activityData[dStr] && !holidays.includes(dStr)) {
+                checkDate.setDate(checkDate.getDate() - 1);
+                dStr = getDateStr(checkDate);
+            }
+
+            while (activityData[dStr] > 0 || holidays.includes(dStr)) {
+                streak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+                dStr = getDateStr(checkDate);
+            }
+            return streak;
+        }
+
+        function renderLessons() {
+            const listEl = document.getElementById('lessons-list');
+            const emptyEl = document.getElementById('lessons-empty');
+            listEl.innerHTML = '';
+
+            if (lessons.length === 0) {
+                emptyEl.style.display = 'block';
+            } else {
+                emptyEl.style.display = 'none';
+                lessons.forEach(l => {
+                    listEl.innerHTML += `
+            <li class="task-item">
+              <div class="task-left">
+                <span class="task-text" style="font-weight:600; color:var(--text-main); font-style:italic;">💡 ${escapeHtml(l.text)}</span>
+              </div>
+              <button class="btn-delete" title="Sil" onclick="deleteLesson('${l.id}')">✕</button>
+            </li>
+          `;
+                });
+            }
+        }
+
+        function renderTodayTasks() {
+            const t = i18n[currentLang] || i18n.tr;
+            const listEl = document.getElementById('today-task-list');
+            const emptyEl = document.getElementById('today-empty');
+            listEl.innerHTML = '';
+            const todaysTasks = tasks.filter(task => task.type === 'daily' || task.type === String(todayDayIndex));
+
+            if (holidays.includes(todayStr)) {
+                btnHoliday.textContent = t.cancelHoliday;
+                btnHoliday.style.background = "var(--accent)"; btnHoliday.style.color = "#000";
+            } else {
+                btnHoliday.textContent = t.makeHoliday;
+                btnHoliday.style.background = "var(--card-border)"; btnHoliday.style.color = "var(--text-main)";
+            }
+
+            if (todaysTasks.length === 0) {
+                emptyEl.style.display = 'block';
+            } else {
+                emptyEl.style.display = 'none';
+                todaysTasks.forEach(task => {
+                    const isCompleted = task.completedDates.includes(todayStr);
+                    let badge = task.type === 'daily' ? t.freq.daily : t.dayNames[todayDayIndex];
+                    listEl.innerHTML += `
+            <li class="task-item ${isCompleted ? 'completed' : ''}">
+              <div class="task-left">
+                <div class="checkbox" onclick="toggleTask('${task.id}')"></div>
+                <div><span class="task-text">${escapeHtml(task.text)}</span><span class="task-meta">${badge}</span></div>
+              </div>
+            </li>
+          `;
+                });
+            }
+        }
+
+        function renderManageTasks() {
+            const t = i18n[currentLang] || i18n.tr;
+            const listEl = document.getElementById('all-task-list');
+            const emptyEl = document.getElementById('all-empty');
+            listEl.innerHTML = '';
+            if (tasks.length === 0) { emptyEl.style.display = 'block'; } else {
+                emptyEl.style.display = 'none';
+                tasks.forEach(task => {
+                    let typeStr = task.type === 'daily' ? t.freq.daily : t.dayNames[parseInt(task.type)];
+                    listEl.innerHTML += `
+            <li class="task-item">
+              <div class="task-left">
+                <div><span class="task-text">${escapeHtml(task.text)}</span><span class="task-meta" style="margin-left:0; margin-top:4px; display:inline-block">${typeStr}</span></div>
+              </div>
+              <button class="btn-delete" title="Sil" onclick="deleteTask('${task.id}')">✕</button>
+            </li>
+          `;
+                });
+            }
+        }
+
+        function renderHeatmap() {
+            const t = i18n[currentLang] || i18n.tr;
+            const grid = document.getElementById('heatmap-grid');
+            const monthsContainer = document.getElementById('heatmap-months');
+            grid.innerHTML = ''; monthsContainer.innerHTML = '';
+
+            const { data: activityData, total } = getActivityData();
+
+            document.getElementById('total-tasks-year').textContent = `${total} ${t.tasksCount}`;
+            updateAverageRating();
+
+            const currentStreak = calculateStreak(activityData);
+            document.getElementById('streak-display').textContent = `${t.streak} ${currentStreak}`;
+
+            const startDate = new Date(currentYear, 0, 1);
+            const endDate = new Date(currentYear, 11, 31);
+            const startOffset = (startDate.getDay() + 6) % 7;
+
+            for (let i = 0; i < startOffset; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'cell empty';
+                grid.appendChild(emptyCell);
+            }
+
+            let currentMonth = -1, dayCounter = startOffset;
+
+            for (let dObj = new Date(startDate); dObj <= endDate; dObj.setDate(dObj.getDate() + 1)) {
+                const dateStr = getDateStr(dObj);
+                const count = activityData[dateStr] || 0;
+                const isHoliday = holidays.includes(dateStr);
+
+                if (dObj.getMonth() !== currentMonth) {
+                    const colIndex = Math.floor(dayCounter / 7);
+                    const monthEl = document.createElement('div');
+                    monthEl.className = 'month-label';
+                    monthEl.textContent = t.monthNames[dObj.getMonth()];
+                    monthEl.style.left = `${colIndex * 15}px`;
+                    monthsContainer.appendChild(monthEl);
+                    currentMonth = dObj.getMonth();
+                }
+
+                let level = 0;
+                if (isHoliday) { level = 4; } else {
+                    if (count >= 4) level = 4; else if (count === 3) level = 3; else if (count === 2) level = 2; else if (count === 1) level = 1;
+                }
+
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (isHoliday) cell.classList.add('holiday-cell');
+                cell.setAttribute('data-level', level);
+
+                const tomorrow = new Date(dObj);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                if (tomorrow.getMonth() !== dObj.getMonth()) cell.classList.add('month-end');
+
+                cell.addEventListener('mouseenter', (e) => {
+                    const tooltip = document.getElementById('tooltip');
+
+                    let tooltipHtml = isHoliday ? `🏖️ - ${dateStr}` : `${count} ${t.tasksCount} - ${dateStr}`;
+                    if (ratings[dateStr]) tooltipHtml += `\n⭐ ${ratings[dateStr]}/10`;
+                    if (notes[dateStr]) tooltipHtml += `\n📝 "${notes[dateStr]}"`;
+
+                    tooltip.textContent = tooltipHtml;
+                    tooltip.style.display = 'block';
+
+                    const rect = cell.getBoundingClientRect();
+                    const containerRect = document.querySelector('.container').getBoundingClientRect();
+                    tooltip.style.left = `${rect.left - containerRect.left - 20}px`;
+
+                    const tooltipHeight = tooltip.offsetHeight;
+                    tooltip.style.top = `${rect.top - containerRect.top - tooltipHeight - 5}px`;
+                });
+
+                cell.addEventListener('mouseleave', () => { document.getElementById('tooltip').style.display = 'none'; });
+                grid.appendChild(cell);
+                dayCounter++;
+            }
+
+            setTimeout(() => {
+                const scrollDiv = document.getElementById('heatmap-scroll');
+                scrollDiv.scrollLeft = scrollDiv.scrollWidth;
+            }, 50);
+        }
+
+        function escapeHtml(str) { return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+        function renderApp() { renderHeatmap(); renderTodayTasks(); renderLessons(); }
+
+        applyLanguage();
+        switchView('home');
+    </script>
+</body>
+
+</html>
