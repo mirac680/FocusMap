@@ -4,7 +4,6 @@
 
 🌐 **Live Demo:** [https://mirac680.github.io/FocusMap/](https://mirac680.github.io/FocusMap/)
 
----
 <img width="1093" height="844" alt="screenshot" src="https://github.com/user-attachments/assets/2579628a-e9ae-4ae2-98e9-28f7b716250d" />
 
 
